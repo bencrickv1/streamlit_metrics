@@ -1,0 +1,13 @@
+venv
+.streamlit/secrets.toml
+schema
+geo_data
+dev_venv
+.ipynb_checkpoints
+__pycache__
+*.pyc
+.__pycache__
+generated_data/03_area
+generated_data/04_plotly
+.generated_data/03_area
+.generated_data/04_plotly

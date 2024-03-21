@@ -1,0 +1,19 @@
+{
+    "application_type": "pp.full.householder",
+    "fee": 206,
+    "fee_reduction": {
+      "sports": true,
+      "parishCouncil": true,
+      "alternative": true
+    },
+    "applicant_type": "individual",
+    "latitude": 51.4656522,
+    "longitude": -0.1185926,
+    "local_authority_district": [
+      "Lambeth"
+    ],
+    "region": "London",
+    "property_type": "residential.dwelling.house.terrace",
+    "project_type": "extend.roof.dormer",
+    "submission_date": "2023-10-02T00:00:00.00Z"
+  }
