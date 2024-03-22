@@ -15,6 +15,7 @@ from utils.get_db_data import get_db_data
 from charts.px_scatter_mapbox import px_scatter_mapbox
 from charts.px_bar_chart import px_bar_chart
 from utils.update_data_state import update_data_state
+from utils.file_io import convert_df_to_csv
 
 # FEES DETAIL PAGE
 st.set_page_config(
@@ -23,6 +24,11 @@ st.set_page_config(
     layout='wide'
 )
 st.sidebar.header='Location by Application Type'
+
+col1, col2 = st.columns(2, gap="large")
+
+with col1:
+    st.markdown('# Location by Application Category and Application Type')
 
 # Value metric selector
 st.session_state.metric_variable_selected = st.sidebar.radio(
@@ -67,7 +73,7 @@ st.session_state.cur_toggle_LPAs, st.session_state.cur_use_LPAs = field_option_m
 )
 
 # Filter to selected data
-st.session_state.display_gdf, st.session_state.colours, st.session_state.by_category_df, st.session_state.by_application_type_df = update_data_state(
+st.session_state.display_gdf, st.session_state.colours, st.session_state.by_category_df, st.session_state.by_application_type_df, st.session_state.export_df = update_data_state(
     st.session_state.data_gdf,
     st.session_state.start_date,
     st.session_state.end_date,
@@ -76,9 +82,18 @@ st.session_state.display_gdf, st.session_state.colours, st.session_state.by_cate
     st.session_state.colour_scale
 )
 
-st.markdown('# Location by Application Category and Application Type')
+# Download button
+with col1:
+    st.download_button(
+        label='Download filtered data ⬇️',
+        data=convert_df_to_csv(st.session_state.export_df),
+        file_name=f'{st.session_state.start_date}_{st.session_state.end_date}_metrics.csv',
+        mime='text/csv',
+    )
+with col2:
+    for _ in range(3):
+        st.markdown('# ')
 
-col1, col2 = st.columns(2, gap="large")
 
 n_colours = len(list(set(st.session_state.display_gdf['application_category'])))
 

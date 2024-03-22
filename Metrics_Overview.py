@@ -18,6 +18,7 @@ from charts.px_scatter_mapbox import px_scatter_mapbox
 from charts.px_bar_chart import px_bar_chart
 from charts.px_choropleth_mapbox import px_choropleth_mapbox
 from utils.update_data_state import update_data_state
+from utils.file_io import convert_df_to_csv
 
 # MAIN PAGE
 st.set_page_config(
@@ -27,9 +28,13 @@ st.set_page_config(
 )
 st.sidebar.header='Metrics Overview'
 
-st.markdown("# Metrics Overview")
-
 col1, col2 = st.columns(2, gap="large")
+
+with col1:
+    st.markdown("# Metrics Overview")
+
+with col2:
+    st.markdown("# ")
 
 st.session_state.colour_scale = 'Viridis' # Viridis, HSV, mygbm, Edge, Plasma, Rainbow, Jet, Plotly3
 
@@ -123,7 +128,7 @@ st.session_state.cur_toggle_LPAs, st.session_state.cur_use_LPAs = field_option_m
 )
 
 # Filter to selected data
-st.session_state.display_gdf, st.session_state.colours, st.session_state.by_category_df, st.session_state.by_application_type_df = update_data_state(
+st.session_state.display_gdf, st.session_state.colours, st.session_state.by_category_df, st.session_state.by_application_type_df, st.session_state.export_df = update_data_state(
     st.session_state.data_gdf,
     st.session_state.start_date,
     st.session_state.end_date,
@@ -132,43 +137,17 @@ st.session_state.display_gdf, st.session_state.colours, st.session_state.by_cate
     st.session_state.colour_scale
 )
 
-# # Filter dataframe according to selected options
-# st.session_state.display_gdf = st.session_state.data_gdf.loc[
-#     (st.session_state.data_gdf['submission_date'] >= pd.to_datetime(st.session_state.start_date)) &
-#     (st.session_state.data_gdf['submission_date'] <= pd.to_datetime(st.session_state.end_date)) &
-#     (st.session_state.data_gdf['application_category'].isin(st.session_state.use_categories))
-# ]
-
-# # Set up / update colours
-# n_colours = len(st.session_state.use_categories)
-# st.session_state.colours = px.colors.sample_colorscale(
-#     st.session_state.colour_scale, [n / (n_colours - 1) for n in range(n_colours)]
-# )
-
-# # Aggregated by application category data
-# st.session_state.by_category_df = st.session_state.display_gdf.groupby(['application_category']).agg({
-#     'geometry': 'count',
-#     'fee': 'sum',
-# }).reset_index().rename(columns={
-#     'geometry': 'number_of_applications',
-#     'fee': 'total_fee'
-# })
-# st.session_state.by_category_df['readable_fee'] = st.session_state.by_category_df.apply(lambda row: numerize(row['total_fee'], 2), axis=1)
-# st.session_state.by_category_df['readable_number'] = st.session_state.by_category_df.apply(lambda row: numerize(row['number_of_applications'], 2), axis=1)
-
-# # Aggregated by application type data
-# st.session_state.by_application_type_df = st.session_state.display_gdf.groupby([
-#     'application_category',
-#     'application_type'
-# ]).agg({
-#     'geometry': 'count',
-#     'fee': 'sum',
-# }).reset_index().rename(columns={
-#     'geometry': 'number_of_applications',
-#     'fee': 'total_fee'
-# })
-# st.session_state.by_application_type_df['readable_fee'] = st.session_state.by_application_type_df.apply(lambda row: numerize(row['total_fee'], 2), axis=1)
-# st.session_state.by_application_type_df['readable_number'] = st.session_state.by_application_type_df.apply(lambda row: numerize(row['number_of_applications'], 2), axis=1)
+# Download button
+with col1:
+    st.download_button(
+        label='Download filtered data ⬇️',
+        data=convert_df_to_csv(st.session_state.export_df),
+        file_name=f'{st.session_state.start_date}_{st.session_state.end_date}_metrics.csv',
+        mime='text/csv',
+    )
+with col2:
+    for _ in range(3):
+        st.markdown('# ')
 
 
 

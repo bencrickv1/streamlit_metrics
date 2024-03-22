@@ -16,9 +16,12 @@ def update_data_state(data_gdf, start_date, end_date, use_categories, use_LPAs, 
 
     # Set up / update colours
     n_colours = len(use_categories)
-    colours = px.colors.sample_colorscale(
-        colour_scale, [n / (n_colours - 1) for n in range(n_colours)]
-    )
+    if n_colours == 1:
+        colours = px.colors.sample_colorscale(colour_scale, [0.5])
+    else:
+        colours = px.colors.sample_colorscale(
+            colour_scale, [n / (n_colours - 1) for n in range(n_colours)]
+        )
 
     # Aggregated by application category data
     by_category_df = display_gdf.groupby(['application_category']).agg({
@@ -45,4 +48,6 @@ def update_data_state(data_gdf, start_date, end_date, use_categories, use_LPAs, 
     by_application_type_df['readable_fee'] = by_application_type_df['total_fee'].apply(lambda x: numerize(x, 2))
     by_application_type_df['readable_number'] = by_application_type_df['number_of_applications'].apply(lambda x: numerize(x, 2))
 
-    return display_gdf, colours, by_category_df, by_application_type_df
+    export_df = pd.DataFrame(display_gdf.drop(columns=['geometry', 'readable_fee']))
+
+    return display_gdf, colours, by_category_df, by_application_type_df, export_df
