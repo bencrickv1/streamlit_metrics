@@ -14,10 +14,13 @@ def field_option_multiselect(df: pd.DataFrame, field_name: str, label: str, pre_
     all_options = sorted(list(set(df[field_name])))
 
     def toggle_all():
-        if st.session_state[toggle_key]:
+        toggle_state = st.session_state[toggle_key]
+        if toggle_state:
             st.session_state[key] = all_options
         else:
             st.session_state[key] = []
+        st.session_state[toggle_key] = toggle_state
+
 
     toggle = st.sidebar.toggle(
         label='Select / deselect all',
