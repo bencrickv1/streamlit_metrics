@@ -13,6 +13,7 @@ from utils.field_option_selector import field_option_checkboxes, field_option_mu
 from utils.field_definitions import metric_area_fields, metric_single_fields
 from charts.px_scatter_mapbox import px_scatter_mapbox
 from charts.px_bar_chart import px_bar_chart
+from utils.update_data_state import update_data_state
 
 # FEES DETAIL PAGE
 st.set_page_config(
@@ -27,35 +28,62 @@ st.markdown(f'# Metrics by Application Category and Application Type')
 col1, col2 = st.columns(2, gap="large")
 
 # Value metric selector
-metric_variable_selected = st.sidebar.radio(
+st.session_state.metric_variable_selected = st.sidebar.radio(
     "Select metric",
-    ['Number of Planning Applications', 'Total Fee']
+    st.session_state.metric_variable_options,
+    index=st.session_state.metric_variable_options.index(st.session_state.metric_variable_selected)
 )
 
-metric_field = metric_single_fields[metric_variable_selected]['number']
-metric_readable_field = metric_single_fields[metric_variable_selected]['readable']
+st.session_state.metric_field = metric_single_fields[st.session_state.metric_variable_selected]['number']
+st.session_state.metric_readable_field = metric_single_fields[st.session_state.metric_variable_selected]['readable']
 
-colours = st.session_state.colours
-by_application_type_df = st.session_state.by_application_type_df
+# Date picker
+st.session_state.start_date = st.sidebar.date_input(
+    label='Start date',
+    value=st.session_state.start_date,
+    min_value=st.session_state.minimum_date,
+    max_value=st.session_state.maximum_date
+)
+st.session_state.end_date = st.sidebar.date_input(
+    label='End date',
+    value=st.session_state.end_date,
+    min_value=st.session_state.minimum_date,
+    max_value=st.session_state.maximum_date
+)
 
-n_colours = len(list(set(by_application_type_df['application_category'])))
+# Category filters
+st.session_state.use_categories = field_option_checkboxes(
+    df=st.session_state.data_gdf,
+    field_name='application_category',
+    preselected=st.session_state.use_categories
+)
 
-application_categories = sorted(list(set(by_application_type_df['application_category'])))
+# Filter to selected data
+st.session_state.display_gdf, st.session_state.colours, st.session_state.by_category_df, st.session_state.by_application_type_df = update_data_state(
+    st.session_state.data_gdf,
+    st.session_state.start_date,
+    st.session_state.end_date,
+    st.session_state.use_categories,
+    st.session_state.colour_scale
+)
 
 col = col1
 
-for colour, application_category in zip(colours, application_categories):
+for colour, application_category in zip(st.session_state.colours, st.session_state.use_categories):
 
-    category_df = by_application_type_df.loc[by_application_type_df['application_category']==application_category]
+    if not application_category in st.session_state.use_categories:
+        continue
+
+    category_df = st.session_state.by_application_type_df.loc[st.session_state.by_application_type_df['application_category']==application_category]
 
     fig_bar = px_bar_chart(
         display_df=category_df,
         colour_field='application_category',
         colours=[colour],
         x_field='application_type',
-        y_field=metric_field,
-        text_field=metric_readable_field,
-        title=f'Application Category - {application_category}: {metric_variable_selected} by Application Type',
+        y_field=st.session_state.metric_field,
+        text_field=st.session_state.metric_readable_field,
+        title=f'Application Category - {application_category}: {st.session_state.metric_variable_selected} by Application Type',
         showlegend=False
     )
 

@@ -10,9 +10,11 @@ from numerize.numerize import numerize
 # from mock_data import planning_permission_data_rows
 from generated_data import generated_data
 from utils.field_option_selector import field_option_checkboxes, field_option_multiselect
+from utils.field_definitions import metric_area_fields, metric_single_fields
 from utils.get_db_data import get_db_data
 from charts.px_scatter_mapbox import px_scatter_mapbox
 from charts.px_bar_chart import px_bar_chart
+from utils.update_data_state import update_data_state
 
 # FEES DETAIL PAGE
 st.set_page_config(
@@ -22,22 +24,59 @@ st.set_page_config(
 )
 st.sidebar.header='Location by Application Type'
 
-colours = st.session_state.colours
-display_gdf = st.session_state.display_gdf
+# Value metric selector
+st.session_state.metric_variable_selected = st.sidebar.radio(
+    "Select metric",
+    st.session_state.metric_variable_options,
+    index=st.session_state.metric_variable_options.index(st.session_state.metric_variable_selected)
+)
+
+st.session_state.metric_field = metric_single_fields[st.session_state.metric_variable_selected]['number']
+st.session_state.metric_readable_field = metric_single_fields[st.session_state.metric_variable_selected]['readable']
+
+# Date picker
+st.session_state.start_date = st.sidebar.date_input(
+    label='Start date',
+    value=st.session_state.start_date,
+    min_value=st.session_state.minimum_date,
+    max_value=st.session_state.maximum_date
+)
+st.session_state.end_date = st.sidebar.date_input(
+    label='End date',
+    value=st.session_state.end_date,
+    min_value=st.session_state.minimum_date,
+    max_value=st.session_state.maximum_date
+)
+
+# Category filters
+st.session_state.use_categories = field_option_checkboxes(
+    df=st.session_state.data_gdf,
+    field_name='application_category',
+    preselected=st.session_state.use_categories
+)
+
+# Filter to selected data
+st.session_state.display_gdf, st.session_state.colours, st.session_state.by_category_df, st.session_state.by_application_type_df = update_data_state(
+    st.session_state.data_gdf,
+    st.session_state.start_date,
+    st.session_state.end_date,
+    st.session_state.use_categories,
+    st.session_state.colour_scale
+)
 
 st.markdown('# Location by Application Category and Application Type')
 
 col1, col2 = st.columns(2, gap="large")
 
-n_colours = len(list(set(display_gdf['application_category'])))
+n_colours = len(list(set(st.session_state.display_gdf['application_category'])))
 
-application_categories = sorted(list(set(display_gdf['application_category'])))
+application_categories = sorted(list(set(st.session_state.display_gdf['application_category'])))
 
 col = col1
 
-for colour, application_category in zip(colours, application_categories):
+for colour, application_category in zip(st.session_state.colours, application_categories):
 
-    category_gdf = display_gdf.loc[display_gdf['application_category']==application_category]
+    category_gdf = st.session_state.display_gdf.loc[st.session_state.display_gdf['application_category']==application_category]
 
     colour_scale_2 = 'Plotly3_r' # Viridis, HSV, mygbm, Edge, Plasma, Rainbow, Jet, Plotly3
     n_colours_2 = len(list(set(category_gdf['application_type'])))
@@ -54,7 +93,8 @@ for colour, application_category in zip(colours, application_categories):
         colours=colours_2,
         size='fee',
         title=f'Application Category - {application_category}: Locations by Application Type',
-        legend_title='Application Type'
+        legend_title='Application Type',
+        y_mod=0 + -0.1 if application_category=='Planning Permission' else 0.0 + -0.4 if application_category=='Prior Approval'else 0.0
     )
 
     with col:

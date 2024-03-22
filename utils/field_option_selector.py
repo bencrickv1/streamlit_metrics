@@ -11,12 +11,12 @@ def field_option_multiselect(df: pd.DataFrame, field_name: str, label: str) -> l
 
     return options
 
-def field_option_checkboxes(df: pd.DataFrame, field_name: str) -> list[str]:
+def field_option_checkboxes(df: pd.DataFrame, field_name: str, preselected) -> list[str]:
 
     options_active = {
         value: st.sidebar.checkbox(
             label=value,
-            value=True
+            value=True if value in preselected else False
         )
     for value in sorted(list(set(df[field_name])))}
 
