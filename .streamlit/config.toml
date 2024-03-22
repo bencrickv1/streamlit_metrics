@@ -1,5 +1,5 @@
 [server]
-maxMessageSize = 400
+maxMessageSize = 1600
 
 [theme]
 base="dark"

@@ -1,0 +1,4 @@
+div.row-widget.stMultiSelect>div {
+    max-height: 300px;
+    overflow: auto;
+}

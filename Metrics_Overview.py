@@ -45,6 +45,8 @@ st.session_state.maximum_date = max(st.session_state.data_gdf['submission_date']
 
 st.session_state.application_categories = sorted(list(set(st.session_state.data_gdf['application_category'])))
 
+st.session_state.LPAs = sorted(list(set(st.session_state.data_gdf['local_planning_authority'])))
+
 # for metric_variable in metric_area_fields:
 #     for metric_unit in metric_area_fields[metric_variable]:
 #         with open(f'generated_data/04_plotly/{metric_variable}_{metric_unit}_choropleth.json', 'r') as fi:
@@ -64,6 +66,11 @@ if not 'end_date' in st.session_state:
 if not 'use_categories' in st.session_state:
     st.session_state.use_categories = st.session_state.application_categories
 
+if not 'cur_toggle_LPAs' in st.session_state:
+    st.session_state.cur_toggle_LPAs = True
+
+if not 'cur_use_LPAs' in st.session_state:
+    st.session_state.cur_use_LPAs = st.session_state.LPAs
 
 # Value metric selector
 st.session_state.metric_variable_selected = st.sidebar.radio(
@@ -104,12 +111,24 @@ st.session_state.use_categories = field_option_checkboxes(
     preselected=st.session_state.use_categories
 )
 
+# Local Planning Authority filters
+st.session_state.cur_toggle_LPAs, st.session_state.cur_use_LPAs = field_option_multiselect(
+    df=st.session_state.data_gdf,
+    field_name='local_planning_authority',
+    label='Local Planning Authority',
+    pre_toggle=st.session_state.cur_toggle_LPAs,
+    preselected=st.session_state.cur_use_LPAs,
+    key='use_LPAs',
+    toggle_key='toggle_LPAs'
+)
+
 # Filter to selected data
 st.session_state.display_gdf, st.session_state.colours, st.session_state.by_category_df, st.session_state.by_application_type_df = update_data_state(
     st.session_state.data_gdf,
     st.session_state.start_date,
     st.session_state.end_date,
     st.session_state.use_categories,
+    st.session_state.use_LPAs,
     st.session_state.colour_scale
 )
 

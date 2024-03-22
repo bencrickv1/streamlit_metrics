@@ -4,13 +4,14 @@ import pandas as pd
 import plotly.express as px
 from numerize.numerize import numerize
 
-def update_data_state(data_gdf, start_date, end_date, use_categories, colour_scale):
+def update_data_state(data_gdf, start_date, end_date, use_categories, use_LPAs, colour_scale):
 
     # Filter dataframe according to selected options
     display_gdf = data_gdf.loc[
         (data_gdf['submission_date'] >= pd.to_datetime(start_date)) &
         (data_gdf['submission_date'] <= pd.to_datetime(end_date)) &
-        (data_gdf['application_category'].isin(use_categories))
+        (data_gdf['application_category'].isin(use_categories)) &
+        (data_gdf['local_planning_authority'].isin(use_LPAs))
     ]
 
     # Set up / update colours
@@ -27,8 +28,8 @@ def update_data_state(data_gdf, start_date, end_date, use_categories, colour_sca
         'geometry': 'number_of_applications',
         'fee': 'total_fee'
     })
-    by_category_df['readable_fee'] = by_category_df.apply(lambda row: numerize(row['total_fee'], 2), axis=1)
-    by_category_df['readable_number'] = by_category_df.apply(lambda row: numerize(row['number_of_applications'], 2), axis=1)
+    by_category_df['readable_fee'] = by_category_df['total_fee'].apply(lambda x: numerize(x, 2))
+    by_category_df['readable_number'] = by_category_df['number_of_applications'].apply(lambda x: numerize(x, 2))
 
     # Aggregated by application type data
     by_application_type_df = display_gdf.groupby([
@@ -41,7 +42,7 @@ def update_data_state(data_gdf, start_date, end_date, use_categories, colour_sca
         'geometry': 'number_of_applications',
         'fee': 'total_fee'
     })
-    by_application_type_df['readable_fee'] = by_application_type_df.apply(lambda row: numerize(row['total_fee'], 2), axis=1)
-    by_application_type_df['readable_number'] = by_application_type_df.apply(lambda row: numerize(row['number_of_applications'], 2), axis=1)
+    by_application_type_df['readable_fee'] = by_application_type_df['total_fee'].apply(lambda x: numerize(x, 2))
+    by_application_type_df['readable_number'] = by_application_type_df['number_of_applications'].apply(lambda x: numerize(x, 2))
 
     return display_gdf, colours, by_category_df, by_application_type_df

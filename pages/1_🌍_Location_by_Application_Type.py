@@ -55,12 +55,24 @@ st.session_state.use_categories = field_option_checkboxes(
     preselected=st.session_state.use_categories
 )
 
+# Local Planning Authority filters
+st.session_state.cur_toggle_LPAs, st.session_state.cur_use_LPAs = field_option_multiselect(
+    df=st.session_state.data_gdf,
+    field_name='local_planning_authority',
+    label='Local Planning Authority',
+    pre_toggle=st.session_state.cur_toggle_LPAs,
+    preselected=st.session_state.cur_use_LPAs,
+    key='use_LPAs',
+    toggle_key='toggle_LPAs'
+)
+
 # Filter to selected data
 st.session_state.display_gdf, st.session_state.colours, st.session_state.by_category_df, st.session_state.by_application_type_df = update_data_state(
     st.session_state.data_gdf,
     st.session_state.start_date,
     st.session_state.end_date,
     st.session_state.use_categories,
+    st.session_state.use_LPAs,
     st.session_state.colour_scale
 )
 
