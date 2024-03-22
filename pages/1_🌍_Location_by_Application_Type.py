@@ -28,7 +28,7 @@ st.sidebar.header='Location by Application Type'
 col1, col2 = st.columns(2, gap="large")
 
 with col1:
-    st.markdown('# Location by Application Category and Application Type')
+    st.markdown('# Location by Application Category and Type')
 
 # Value metric selector
 st.session_state.metric_variable_selected = st.sidebar.radio(
@@ -91,7 +91,7 @@ with col1:
         mime='text/csv',
     )
 with col2:
-    for _ in range(3):
+    for _ in range(4):
         st.markdown('# ')
 
 
