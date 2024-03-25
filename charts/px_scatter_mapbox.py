@@ -12,6 +12,7 @@ def px_scatter_mapbox(display_gdf, colour_field, colours, title, size=None, show
         "latitude": False,
         "longitude": False,
         "submission_date": True,
+        "readable_fee": False
     }
 
     fig_map = px.scatter_mapbox(
@@ -19,7 +20,6 @@ def px_scatter_mapbox(display_gdf, colour_field, colours, title, size=None, show
         lat="latitude",
         lon="longitude",
         hover_name=hover_name,
-        hover_data=hover_data,
         color=colour_field,
         color_discrete_sequence=colours,
         size=size,
@@ -27,6 +27,7 @@ def px_scatter_mapbox(display_gdf, colour_field, colours, title, size=None, show
         opacity=0.5,
         title=title,
         labels=field_labels,
+        hover_data=hover_data,
         height=800,
         width=800,
         center={'lat': 55.36274150310406, 'lon': -3.440547563580056},

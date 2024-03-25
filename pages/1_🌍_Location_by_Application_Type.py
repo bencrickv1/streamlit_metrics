@@ -40,6 +40,9 @@ st.session_state.metric_variable_selected = st.sidebar.radio(
 st.session_state.metric_field = metric_single_fields[st.session_state.metric_variable_selected]['number']
 st.session_state.metric_readable_field = metric_single_fields[st.session_state.metric_variable_selected]['readable']
 
+st.session_state.map_size_field = 'fee' if 'fee' in st.session_state.metric_variable_selected.lower() else None
+st.session_state.map_scale_note = ' (scale ∝ fee)' if 'fee' in st.session_state.metric_variable_selected.lower() else ''
+
 # Date picker
 st.session_state.start_date = st.sidebar.date_input(
     label='Start date',
@@ -118,8 +121,8 @@ for colour, application_category in zip(st.session_state.colours, application_ca
         display_gdf=category_gdf,
         colour_field='application_type',
         colours=colours_2,
-        size='fee',
-        title=f'Application Category - {application_category}: Locations by Application Type',
+        size=st.session_state.map_size_field,
+        title=f'Application Category - {application_category}: Locations by Application Type{st.session_state.map_scale_note}',
         legend_title='Application Type',
         y_mod=0 + -0.1 if application_category=='Planning Permission' else 0.0 + -0.4 if application_category=='Prior Approval'else 0.0
     )

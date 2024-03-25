@@ -95,6 +95,9 @@ st.session_state.metric_readable_field = metric_single_fields[st.session_state.m
 # metric_area_field = metric_area_fields[st.session_state.metric_variable_selected][metric_type_selected]['field']
 # metric_area_display_name = metric_area_fields[st.session_state.metric_variable_selected][metric_type_selected]['display_name']
 
+st.session_state.map_size_field = 'fee' if 'fee' in st.session_state.metric_variable_selected.lower() else None
+st.session_state.map_scale_note = ' (scale ∝ fee)' if 'fee' in st.session_state.metric_variable_selected.lower() else ''
+
 # Date picker
 st.session_state.start_date = st.sidebar.date_input(
     label='Start date',
@@ -156,8 +159,8 @@ fig_map = px_scatter_mapbox(
     display_gdf=st.session_state.display_gdf,
     colour_field='application_category',
     colours=st.session_state.colours,
-    size='fee',
-    title='Locations by Application Category',
+    size=st.session_state.map_size_field,
+    title=f'Locations by Application Category{st.session_state.map_scale_note}',
     legend_title='Application Category'
 )
 with col1:

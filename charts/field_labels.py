@@ -7,5 +7,8 @@ field_labels = {
     'applications_per_km2': 'Applications per Square Kilometre',
     'total_fee': 'Total Fee',
     'total_fee_per_capita': 'Total Fee per Capita',
-    'total_fee_per_km2': 'Total Fee per Square Kilometre'
+    'total_fee_per_km2': 'Total Fee per Square Kilometre',
+    'fee': 'Fee',
+    'submission_date': 'Submission Date',
 }
+
