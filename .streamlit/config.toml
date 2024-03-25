@@ -6,4 +6,4 @@ base="dark"
 primaryColor="#00938f"
 
 [global]
-disableWidgetStateDuplicationWarning = false
+disableWidgetStateDuplicationWarning = true
