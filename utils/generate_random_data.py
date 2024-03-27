@@ -3,8 +3,6 @@ import time
 import pandas as pd
 import geopandas as gpd
 import json
-
-from schema.schema_v040 import schema_dict
 from tqdm import tqdm
 
 
@@ -56,6 +54,11 @@ def random_date(start, end, time_format):
 
 application_type_descriptions = []
 application_type_values = []
+
+schema_file = f"schema/schema_v0.4.0.json"
+
+with open(schema_file) as schema_json_file:
+    schema_dict = json.load(schema_json_file)
 
 for obj in schema_dict["definitions"]["ApplicationType"]["anyOf"]:
     description = obj["properties"]["description"]["const"]
