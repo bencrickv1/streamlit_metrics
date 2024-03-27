@@ -2,6 +2,7 @@ venv
 .streamlit/secrets.toml
 schema
 geo_data
+sample_data
 dev_venv
 .ipynb_checkpoints
 __pycache__
