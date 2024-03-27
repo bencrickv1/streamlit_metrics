@@ -1,8 +1,17 @@
-
 import plotly.express as px
 from .field_labels import field_labels
 
-def px_scatter_mapbox(display_gdf, colour_field, colours, title, size=None, showlegend=True, legend_title=None, y_mod=0):
+
+def px_scatter_mapbox(
+    display_gdf,
+    colour_field,
+    colours,
+    title,
+    size=None,
+    showlegend=True,
+    legend_title=None,
+    y_mod=0,
+):
 
     hover_name = "application_type"
     hover_data = {
@@ -12,7 +21,7 @@ def px_scatter_mapbox(display_gdf, colour_field, colours, title, size=None, show
         "latitude": False,
         "longitude": False,
         "submission_date": True,
-        "readable_fee": False
+        "readable_fee": False,
     }
 
     fig_map = px.scatter_mapbox(
@@ -30,19 +39,15 @@ def px_scatter_mapbox(display_gdf, colour_field, colours, title, size=None, show
         hover_data=hover_data,
         height=800,
         width=800,
-        center={'lat': 55.36274150310406, 'lon': -3.440547563580056},
-        zoom=4.5
+        center={"lat": 55.36274150310406, "lon": -3.440547563580056},
+        zoom=4.5,
     )
 
     fig_map.update_layout(
         legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=-0.125+y_mod,
-            xanchor="center",
-            x=0.5
+            orientation="h", yanchor="bottom", y=-0.125 + y_mod, xanchor="center", x=0.5
         ),
-        showlegend=showlegend
+        showlegend=showlegend,
     )
 
     if legend_title:
