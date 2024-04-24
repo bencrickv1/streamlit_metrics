@@ -7,7 +7,7 @@ import plotly.express as px
 from numerize.numerize import numerize
 
 # from mock_data import planning_permission_data_rows
-from generated_data import generated_data
+# from generated_data import generated_data
 from utils.field_option_selector import (
     field_option_checkboxes,
     field_option_multiselect,
